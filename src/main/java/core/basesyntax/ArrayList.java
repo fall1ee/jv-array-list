@@ -11,28 +11,37 @@ public class ArrayList<T> implements List<T> {
         elements = (T[]) new Object[MAX_DEFAULT_SIZE];
     }
 
-    @Override
-    public void add(T value) {
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new ArrayListIndexOutOfBoundsException("Index " + index + " is out of bounds");
+        }
+    }
+
+    private void checkIndexForAdd(int index) {
+        if (index < 0 || index > size) {
+            throw new ArrayListIndexOutOfBoundsException("Index " + index + " is out of bounds");
+        }
+    }
+
+    private void resizeIfNeeded() {
         if (size == elements.length) {
             int newCapacity = elements.length + (elements.length / 2);
             T[] newElements = (T[]) new Object[newCapacity];
             System.arraycopy(elements, 0, newElements, 0, elements.length);
             elements = newElements;
         }
+    }
+
+    @Override
+    public void add(T value) {
+        resizeIfNeeded();
         elements[size++] = value;
     }
 
     @Override
     public void add(T value, int index) {
-        if (index < 0 || index > size) {
-            throw new ArrayListIndexOutOfBoundsException("Index " + index + " is out of bounds");
-        }
-        if (size == elements.length) {
-            int newCapacity = elements.length + (elements.length / 2);
-            T[] newElements = (T[]) new Object[newCapacity];
-            System.arraycopy(elements, 0, newElements, 0, elements.length);
-            elements = newElements;
-        }
+        checkIndexForAdd(index);
+        resizeIfNeeded();
         for (int i = size; i > index; i--) {
             elements[i] = elements[i - 1];
         }
@@ -49,25 +58,19 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public T get(int index) {
-        if (index < 0 || index >= size) {
-            throw new ArrayListIndexOutOfBoundsException("Index " + index + " is out of bounds");
-        }
+        checkIndex(index);
         return elements[index];
     }
 
     @Override
     public void set(T value, int index) {
-        if (index < 0 || index >= size) {
-            throw new ArrayListIndexOutOfBoundsException("Index " + index + " is out of bounds");
-        }
+        checkIndex(index);
         elements[index] = value;
     }
 
     @Override
     public T remove(int index) {
-        if (index < 0 || index >= size) {
-            throw new ArrayListIndexOutOfBoundsException("Index " + index + " is out of bounds");
-        }
+        checkIndex(index);
         final T timeVariable = elements[index];
         for (int i = index; i < size - 1; i++) {
             elements[i] = elements[i + 1];
